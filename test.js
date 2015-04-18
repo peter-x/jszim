@@ -25,10 +25,24 @@ f.open(filename).then(function(abstractFile)
 {
     zimfile.fromFile(abstractFile).then(function(zimfile)
     {
-        return zimfile.dirEntryByUrlIndex(7).then(function(dirEntry)
+//        loadRandom(zimfile, 500);
+        return zimfile.dirEntryByUrlIndex(10100).then(function(dirEntry)
         {
-            console.log(dirEntry);
             return zimfile.blob(dirEntry.cluster, dirEntry.blob).then(err, err);
         });
     }, err);
 }, err);
+
+var loadRandom = function(zimfile, counter)
+{
+    console.log(counter);
+    if (counter <= 0) return;
+
+    var index = Math.floor(Math.random() * 100000);
+    zimfile.dirEntryByUrlIndex(index).then(function(dirEntry)
+    {
+        zimfile.blob(dirEntry.cluster, dirEntry.blob).then(function() {
+            loadRandom(zimfile, counter - 1);
+        }, err);
+    });
+}
